@@ -141,40 +141,58 @@
         <div class="sector" id="D20" onclick="buyBox('D20', prompt('Enter your name:'))">Double 20</div>
         <div class="sector" id="Grote20" onclick="buyBox('Grote20', prompt('Enter your name:'))">Grote 20</div>
         <div class="sector" id="Kleine20" onclick="buyBox('Kleine20', prompt('Enter your name:'))">Kleine 20</div>
-    </div>
+   </div>
 
     <script>
-        // Import the functions you need from the SDKs you need
-import { initializeApp } from "firebase/app";
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
-
-// Your web app's Firebase configuration
-const firebaseConfig = {
-  apiKey: "AIzaSyBkzKQV21QWS1gRTdaRlFQwjznkBuTl8_Y",
-  authDomain: "dartsblok-61aff.firebaseapp.com",
-  projectId: "dartsblok-61aff",
-  storageBucket: "dartsblok-61aff.firebasestorage.app",
-  messagingSenderId: "49756446283",
-  appId: "1:49756446283:web:75783060094e08732a77ce"
-};
+        // Initialize Firebase
+		const firebaseConfig = {
+  		apiKey: "AIzaSyBkzKQV21QWS1gRTdaRlFQwjznkBuTl8_Y",
+  		authDomain: "dartsblok-61aff.firebaseapp.com",
+ 		projectId: "dartsblok-61aff",
+  		storageBucket: "dartsblok-61aff.firebasestorage.app",
+  		messagingSenderId: "49756446283",
+  		appId: "1:49756446283:web:75783060094e08732a77ce"
+		}
 
         const app = firebase.initializeApp(firebaseConfig);
         const database = firebase.database(app);
 
         // Function to mark a sector as sold
         function buyBox(boxId, playerName) {
-            const boxRef = database.ref('sectors/' + boxId);
-            boxRef.set({
-                player: playerName,
-                boughtAt: new Date().toISOString()
-            }).then(() => {
-                document.getElementById(boxId).classList.add('sold');
-                document.getElementById(boxId).textContent = playerName + " (Bought)";
-            }).catch(error => {
-                console.error("Error writing to Firebase Database:", error);
+            // Check if a name was entered
+            if (playerName && playerName.trim() !== "") {
+                const boxRef = database.ref('sectors/' + boxId);
+                boxRef.set({
+                    player: playerName,
+                    boughtAt: new Date().toISOString()
+                }).then(() => {
+                    document.getElementById(boxId).classList.add('sold');
+                    document.getElementById(boxId).textContent = playerName + " (Bought)";
+                }).catch(error => {
+                    console.error("Error writing to Firebase Database:", error);
+                });
+            } else {
+                alert("Please enter a valid name!");
+            }
+        }
+
+        // Function to load the initial state of each sector
+        function loadSectors() {
+            const sectorsRef = firebase.database().ref('sectors');
+            sectorsRef.on('value', (snapshot) => {
+                const sectors = snapshot.val();
+                for (let boxId in sectors) {
+                    if (sectors[boxId].player) {
+                        const sectorElement = document.getElementById(boxId);
+                        sectorElement.classList.add('sold');
+                        sectorElement.textContent = sectors[boxId].player + " (Bought)";
+                    }
+                }
             });
         }
+
+        // Load the initial state when the page loads
+        window.onload = loadSectors;
     </script>
 </body>
 </html>
