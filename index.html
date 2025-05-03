@@ -157,19 +157,33 @@
         const app = firebase.initializeApp(firebaseConfig);
         const database = firebase.database(app);
 
-        // Function to mark a sector as sold
-        function buyBox(boxId, playerName) {
+        // Function to mark a sector as sold and handle payment
+        function buyBox(boxId, playerName, price) {
             // Check if a name was entered
             if (playerName && playerName.trim() !== "") {
                 const boxRef = database.ref('sectors/' + boxId);
-                boxRef.set({
-                    player: playerName,
-                    boughtAt: new Date().toISOString()
-                }).then(() => {
-                    document.getElementById(boxId).classList.add('sold');
-                    document.getElementById(boxId).textContent = playerName + " (Bought)";
-                }).catch(error => {
-                    console.error("Error writing to Firebase Database:", error);
+
+                // Check if the box has already been sold
+                boxRef.once('value').then(snapshot => {
+                    if (snapshot.exists()) {
+                        alert("This sector has already been bought!");
+                    } else {
+                        // Save the purchase to Firebase
+                        boxRef.set({
+                            player: playerName,
+                            boughtAt: new Date().toISOString(),
+                            price: price
+                        }).then(() => {
+                            document.getElementById(boxId).classList.add('sold');
+                            document.getElementById(boxId).textContent = playerName + " (Bought)";
+
+                            // Disable further clicks on this sector
+                            document.getElementById(boxId).onclick = null;
+                            document.getElementById("price-info").textContent = "Price for " + boxId + ": " + price + "€";
+                        }).catch(error => {
+                            console.error("Error writing to Firebase Database:", error);
+                        });
+                    }
                 });
             } else {
                 alert("Please enter a valid name!");
@@ -186,6 +200,7 @@
                         const sectorElement = document.getElementById(boxId);
                         sectorElement.classList.add('sold');
                         sectorElement.textContent = sectors[boxId].player + " (Bought)";
+                        sectorElement.onclick = null;  // Disable further clicks
                     }
                 }
             });
