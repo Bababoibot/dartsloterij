@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dartboard Game</title>
+
+    <!-- Firebase SDK scripts -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js"></script>
+
+    <style>
+        /* Styling for the dartboard */
+        #board {
+            display: grid;
+            grid-template-columns: repeat(10, 100px);  /* 10 columns */
+            gap: 5px;
+            margin-top: 20px;
+        }
+
+        .sector {
+            width: 100px;
+            height: 100px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #e0e0e0;
+            border: 1px solid #ccc;
+            cursor: pointer;
+        }
+
+        .sector.sold {
+            background-color: #ffcccc;
+            color: #a00;
+        }
+    </style>
+</head>
+<body>
+    <h1>Welcome to the Dartboard Game</h1>
+    <p>Select a block to purchase by clicking on it.</p>
+
+    <!-- Dartboard Structure (values 1 to 20) -->
+    <div id="board">
+        <!-- Triple and Double values for each number from 1 to 20 -->
+        <div class="sector" id="T1" onclick="buyBox('T1', prompt('Enter your name:'))">Triple 1</div>
+        <div class="sector" id="D1" onclick="buyBox('D1', prompt('Enter your name:'))">Double 1</div>
+        <div class="sector" id="Grote1" onclick="buyBox('Grote1', prompt('Enter your name:'))">Grote 1</div>
+        <div class="sector" id="Kleine1" onclick="buyBox('Kleine1', prompt('Enter your name:'))">Kleine 1</div>
+
+        <div class="sector" id="T2" onclick="buyBox('T2', prompt('Enter your name:'))">Triple 2</div>
+        <div class="sector" id="D2" onclick="buyBox('D2', prompt('Enter your name:'))">Double 2</div>
+        <div class="sector" id="Grote2" onclick="buyBox('Grote2', prompt('Enter your name:'))">Grote 2</div>
+        <div class="sector" id="Kleine2" onclick="buyBox('Kleine2', prompt('Enter your name:'))">Kleine 2</div>
+
+        <div class="sector" id="T3" onclick="buyBox('T3', prompt('Enter your name:'))">Triple 3</div>
+        <div class="sector" id="D3" onclick="buyBox('D3', prompt('Enter your name:'))">Double 3</div>
+        <div class="sector" id="Grote3" onclick="buyBox('Grote3', prompt('Enter your name:'))">Grote 3</div>
+        <div class="sector" id="Kleine3" onclick="buyBox('Kleine3', prompt('Enter your name:'))">Kleine 3</div>
+
+        <div class="sector" id="T4" onclick="buyBox('T4', prompt('Enter your name:'))">Triple 4</div>
+        <div class="sector" id="D4" onclick="buyBox('D4', prompt('Enter your name:'))">Double 4</div>
+        <div class="sector" id="Grote4" onclick="buyBox('Grote4', prompt('Enter your name:'))">Grote 4</div>
+        <div class="sector" id="Kleine4" onclick="buyBox('Kleine4', prompt('Enter your name:'))">Kleine 4</div>
+
+        <div class="sector" id="T5" onclick="buyBox('T5', prompt('Enter your name:'))">Triple 5</div>
+        <div class="sector" id="D5" onclick="buyBox('D5', prompt('Enter your name:'))">Double 5</div>
+        <div class="sector" id="Grote5" onclick="buyBox('Grote5', prompt('Enter your name:'))">Grote 5</div>
+        <div class="sector" id="Kleine5" onclick="buyBox('Kleine5', prompt('Enter your name:'))">Kleine 5</div>
+
+        <div class="sector" id="T6" onclick="buyBox('T6', prompt('Enter your name:'))">Triple 6</div>
+        <div class="sector" id="D6" onclick="buyBox('D6', prompt('Enter your name:'))">Double 6</div>
+        <div class="sector" id="Grote6" onclick="buyBox('Grote6', prompt('Enter your name:'))">Grote 6</div>
+        <div class="sector" id="Kleine6" onclick="buyBox('Kleine6', prompt('Enter your name:'))">Kleine 6</div>
+
+        <div class="sector" id="T7" onclick="buyBox('T7', prompt('Enter your name:'))">Triple 7</div>
+        <div class="sector" id="D7" onclick="buyBox('D7', prompt('Enter your name:'))">Double 7</div>
+        <div class="sector" id="Grote7" onclick="buyBox('Grote7', prompt('Enter your name:'))">Grote 7</div>
+        <div class="sector" id="Kleine7" onclick="buyBox('Kleine7', prompt('Enter your name:'))">Kleine 7</div>
+
+        <div class="sector" id="T8" onclick="buyBox('T8', prompt('Enter your name:'))">Triple 8</div>
+        <div class="sector" id="D8" onclick="buyBox('D8', prompt('Enter your name:'))">Double 8</div>
+        <div class="sector" id="Grote8" onclick="buyBox('Grote8', prompt('Enter your name:'))">Grote 8</div>
+        <div class="sector" id="Kleine8" onclick="buyBox('Kleine8', prompt('Enter your name:'))">Kleine 8</div>
+
+        <div class="sector" id="T9" onclick="buyBox('T9', prompt('Enter your name:'))">Triple 9</div>
+        <div class="sector" id="D9" onclick="buyBox('D9', prompt('Enter your name:'))">Double 9</div>
+        <div class="sector" id="Grote9" onclick="buyBox('Grote9', prompt('Enter your name:'))">Grote 9</div>
+        <div class="sector" id="Kleine9" onclick="buyBox('Kleine9', prompt('Enter your name:'))">Kleine 9</div>
+
+        <div class="sector" id="T10" onclick="buyBox('T10', prompt('Enter your name:'))">Triple 10</div>
+        <div class="sector" id="D10" onclick="buyBox('D10', prompt('Enter your name:'))">Double 10</div>
+        <div class="sector" id="Grote10" onclick="buyBox('Grote10', prompt('Enter your name:'))">Grote 10</div>
+        <div class="sector" id="Kleine10" onclick="buyBox('Kleine10', prompt('Enter your name:'))">Kleine 10</div>
+
+        <div class="sector" id="T11" onclick="buyBox('T11', prompt('Enter your name:'))">Triple 11</div>
+        <div class="sector" id="D11" onclick="buyBox('D11', prompt('Enter your name:'))">Double 11</div>
+        <div class="sector" id="Grote11" onclick="buyBox('Grote11', prompt('Enter your name:'))">Grote 11</div>
+        <div class="sector" id="Kleine11" onclick="buyBox('Kleine11', prompt('Enter your name:'))">Kleine 11</div>
+
+        <div class="sector" id="T12" onclick="buyBox('T12', prompt('Enter your name:'))">Triple 12</div>
+        <div class="sector" id="D12" onclick="buyBox('D12', prompt('Enter your name:'))">Double 12</div>
+        <div class="sector" id="Grote12" onclick="buyBox('Grote12', prompt('Enter your name:'))">Grote 12</div>
+        <div class="sector" id="Kleine12" onclick="buyBox('Kleine12', prompt('Enter your name:'))">Kleine 12</div>
+
+        <div class="sector" id="T13" onclick="buyBox('T13', prompt('Enter your name:'))">Triple 13</div>
+        <div class="sector" id="D13" onclick="buyBox('D13', prompt('Enter your name:'))">Double 13</div>
+        <div class="sector" id="Grote13" onclick="buyBox('Grote13', prompt('Enter your name:'))">Grote 13</div>
+        <div class="sector" id="Kleine13" onclick="buyBox('Kleine13', prompt('Enter your name:'))">Kleine 13</div>
+
+        <div class="sector" id="T14" onclick="buyBox('T14', prompt('Enter your name:'))">Triple 14</div>
+        <div class="sector" id="D14" onclick="buyBox('D14', prompt('Enter your name:'))">Double 14</div>
+        <div class="sector" id="Grote14" onclick="buyBox('Grote14', prompt('Enter your name:'))">Grote 14</div>
+        <div class="sector" id="Kleine14" onclick="buyBox('Kleine14', prompt('Enter your name:'))">Kleine 14</div>
+
+        <div class="sector" id="T15" onclick="buyBox('T15', prompt('Enter your name:'))">Triple 15</div>
+        <div class="sector" id="D15" onclick="buyBox('D15', prompt('Enter your name:'))">Double 15</div>
+        <div class="sector" id="Grote15" onclick="buyBox('Grote15', prompt('Enter your name:'))">Grote 15</div>
+        <div class="sector" id="Kleine15" onclick="buyBox('Kleine15', prompt('Enter your name:'))">Kleine 15</div>
+
+        <div class="sector" id="T16" onclick="buyBox('T16', prompt('Enter your name:'))">Triple 16</div>
+        <div class="sector" id="D16" onclick="buyBox('D16', prompt('Enter your name:'))">Double 16</div>
+        <div class="sector" id="Grote16" onclick="buyBox('Grote16', prompt('Enter your name:'))">Grote 16</div>
+        <div class="sector" id="Kleine16" onclick="buyBox('Kleine16', prompt('Enter your name:'))">Kleine 16</div>
+
+        <div class="sector" id="T17" onclick="buyBox('T17', prompt('Enter your name:'))">Triple 17</div>
+        <div class="sector" id="D17" onclick="buyBox('D17', prompt('Enter your name:'))">Double 17</div>
+        <div class="sector" id="Grote17" onclick="buyBox('Grote17', prompt('Enter your name:'))">Grote 17</div>
+        <div class="sector" id="Kleine17" onclick="buyBox('Kleine17', prompt('Enter your name:'))">Kleine 17</div>
+
+        <div class="sector" id="T18" onclick="buyBox('T18', prompt('Enter your name:'))">Triple 18</div>
+        <div class="sector" id="D18" onclick="buyBox('D18', prompt('Enter your name:'))">Double 18</div>
+        <div class="sector" id="Grote18" onclick="buyBox('Grote18', prompt('Enter your name:'))">Grote 18</div>
+        <div class="sector" id="Kleine18" onclick="buyBox('Kleine18', prompt('Enter your name:'))">Kleine 18</div>
+
+        <div class="sector" id="T19" onclick="buyBox('T19', prompt('Enter your name:'))">Triple 19</div>
+        <div class="sector" id="D19" onclick="buyBox('D19', prompt('Enter your name:'))">Double 19</div>
+        <div class="sector" id="Grote19" onclick="buyBox('Grote19', prompt('Enter your name:'))">Grote 19</div>
+        <div class="sector" id="Kleine19" onclick="buyBox('Kleine19', prompt('Enter your name:'))">Kleine 19</div>
+
+        <div class="sector" id="T20" onclick="buyBox('T20', prompt('Enter your name:'))">Triple 20</div>
+        <div class="sector" id="D20" onclick="buyBox('D20', prompt('Enter your name:'))">Double 20</div>
+        <div class="sector" id="Grote20" onclick="buyBox('Grote20', prompt('Enter your name:'))">Grote 20</div>
+        <div class="sector" id="Kleine20" onclick="buyBox('Kleine20', prompt('Enter your name:'))">Kleine 20</div>
+    </div>
+
+    <script>
+        // Initialize Firebase
+        const firebaseConfig = {
+            apiKey: "YOUR_API_KEY",
+            authDomain: "YOUR_AUTH_DOMAIN",
+            databaseURL: "YOUR_DATABASE_URL",
+            projectId: "YOUR_PROJECT_ID",
+            storageBucket: "YOUR_STORAGE_BUCKET",
+            messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+            appId: "YOUR_APP_ID"
+        };
+
+        const app = firebase.initializeApp(firebaseConfig);
+        const database = firebase.database(app);
+
+        // Function to mark a sector as sold
+        function buyBox(boxId, playerName) {
+            const boxRef = database.ref('sectors/' + boxId);
+            boxRef.set({
+                player: playerName,
+                boughtAt: new Date().toISOString()
+            }).then(() => {
+                document.getElementById(boxId).classList.add('sold');
+                document.getElementById(boxId).textContent = playerName + " (Bought)";
+            }).catch(error => {
+                console.error("Error writing to Firebase Database:", error);
+            });
+        }
+    </script>
+</body>
+</html>

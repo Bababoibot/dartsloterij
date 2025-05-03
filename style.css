@@ -1,0 +1,29 @@
+body {
+    font-family: Arial, sans-serif;
+    text-align: center;
+    background-color: #f4f4f4;
+}
+#board {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    max-width: 1200px;
+    margin: 20px auto;
+}
+.sector {
+    border: 1px solid #ccc;
+    padding: 10px;
+    margin: 5px;
+    width: 110px;
+    cursor: pointer;
+    background-color: #fff;
+    white-space: pre-line;
+    border-radius: 8px;
+}
+.sector.sold {
+    background-color: #ddd;
+    cursor: not-allowed;
+}
+.hidden {
+    display: none;
+}
